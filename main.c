@@ -105,8 +105,8 @@ void    getRealTimeData (modbus_t *ctx)
     float loadVoltage =  ((float) buffer[ 0x0C ]) / 100.0;
     float loadCurrent =  ((float) buffer[ 0x0D ]) / 100.0;
 
-    temp    = buffer[ 0x0E ] << 16;
-    temp |= buffer[ 0x0F ];
+    temp    = buffer[ 0x0F ] << 16;
+    temp |= buffer[ 0x0E ];
     float loadPower   =  (float) temp / 100.0;
     
     
@@ -213,9 +213,8 @@ void    getSettings (modbus_t *ctx)
     float   floatVoltage            = ((float) buffer[ 0x08 ]) / 100.0;
     float   boostReconnectVoltage   = ((float) buffer[ 0x09 ]) / 100.0;
 
-    float   lowVoltageReconnect     = ((float) buffer[ 0x0A ]) / 100.0;
-    //
     //  Our LS1024B controller doesn't seem to support any register data above 0x0A
+    //float   lowVoltageReconnect     = ((float) buffer[ 0x0A ]) / 100.0;
     //float   underVoltageRecover     = ((float) buffer[ 0x0B ]) / 100.0;
     //float   underVoltageWarning     = ((float) buffer[ 0x0C ]) / 100.0;
     //float   lowVoltageDisconnect    = ((float) buffer[ 0x0D ]) / 100.0;
@@ -235,7 +234,6 @@ void    getSettings (modbus_t *ctx)
     printf( "Boost Voltage Disconnect: %0.2f V\n", boostVoltage );
     printf( "Float Voltage Disconnect: %0.2f V\n", floatVoltage );
     printf( "Boost Voltage Reconnect: %0.2f V\n", boostReconnectVoltage );
-    printf( "Low Voltage Reconnect: %0.2f V\n", lowVoltageReconnect );
 }
 
 // -----------------------------------------------------------------------------
@@ -253,8 +251,31 @@ void    getRatedData (modbus_t *ctx)
         return;
     }
 
-    puts(   "-- Rated Data from Controller --" );
     
+    float   pvArrayRatedVoltage     = ((float) buffer[ 0x00 ]) / 100.0;
+    float   pvArrayRatedCurrent     = ((float) buffer[ 0x01 ]) / 100.0;
+
+    long temp  = buffer[ 0x03 ] << 16;
+    temp |= buffer[ 0x02 ];
+    float pvArrayRatedPower =  (float) temp / 100.0;
+
+    float   batteryRatedVoltage     = ((float) buffer[ 0x04 ]) / 100.0;
+    float   batteryRatedCurrent     = ((float) buffer[ 0x05 ]) / 100.0;
+ 
+    temp  = buffer[ 0x07 ] << 16;
+    temp |= buffer[ 0x06 ];
+    float batteryRatedPower =  (float) temp / 100.0;
+
+    uint16_t    chargingMode = buffer[ 0x08 ];                  // 0x01 == PWM
+    
+    puts(   "-- Rated Data from Controller --" );
+    printf( "PV Rated Voltage: %0.2f V\n", pvArrayRatedVoltage );
+    printf( "PV Rated Current: %0.2f A\n", pvArrayRatedCurrent );
+    printf( "PV Rated Power: %0.2f W\n", pvArrayRatedPower );
+    printf( "Battery Rated Voltage: %0.2f V\n", batteryRatedVoltage );
+    printf( "Battery Rated Current: %0.2f A\n", batteryRatedCurrent );
+    printf( "Battery Rated Power: %0.2f W\n", batteryRatedPower );
+    printf( "Charging Mode: %0X\n", chargingMode );
 }
 
 // -----------------------------------------------------------------------------
