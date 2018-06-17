@@ -96,8 +96,8 @@ void    getRealTimeData (modbus_t *ctx)
     float batteryVoltage =  ((float) buffer[ 0x04 ]) / 100.0;
     float batteryCurrent =  ((float) buffer[ 0x05 ]) / 100.0;
 
-    temp = buffer[ 0x06 ] << 16;
-    temp |= buffer[ 0x07 ];
+    temp = buffer[ 0x07 ] << 16;
+    temp |= buffer[ 0x06 ];
     float batteryPower   =  (float) temp / 100.0;
     
     // ---------------------------------------------
